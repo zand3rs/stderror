@@ -1,2 +1,3 @@
 # stderror
-Extendable JavaScript Error class.
+
+Extendable JavaScript Error class. (Coming soon!)

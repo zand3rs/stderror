@@ -1,0 +1,26 @@
+{
+  "name": "stderror",
+  "version": "0.1.0",
+  "description": "Extendable Error class.",
+  "main": "index.js",
+  "scripts": {
+    "test": "make MOCHA_OPTS='-C -R dot' test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zand3rs/stderror.git"
+  },
+  "keywords": [
+    "error",
+    "exception"
+  ],
+  "author": "Alexander Magtipon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zand3rs/stderror/issues"
+  },
+  "homepage": "https://github.com/zand3rs/stderror",
+  "devDependencies": {
+    "node-test-helper": "^0.2.6"
+  }
+}
