@@ -39,13 +39,6 @@ StdError._name = StdError.name;
 
 StdError.extend = extend.bind(StdError);
 
-//------------------------------------------------------------------------------
-
-StdError.define = define.bind(StdError);;
-
-//==============================================================================
-//-- helper functions
-
 function extend(options) {
   var self = this;
   var code, name, message;
@@ -84,12 +77,15 @@ function extend(options) {
 
   child.prototype = Object.create(self.prototype);
   child.extend = extend.bind(child);
+  child.define = define.bind(child);
   child._name = name;
 
   return child;
 }
 
 //------------------------------------------------------------------------------
+
+StdError.define = define.bind(StdError);;
 
 function define(options) {
   var self = this;

@@ -102,7 +102,7 @@ describe(TEST_NAME, function() {
   });
 
   describe(".define()", function() {
-    it("allows definition of custom exception", function() {
+    it("allows definition of custom error", function() {
       expect(StdError.CustomError).to.not.exist;
       StdError.define("CustomError");
       expect(StdError.CustomError).to.exist;
@@ -122,7 +122,7 @@ describe(TEST_NAME, function() {
       expect(err.message).to.equal("Whatever error");
     });
 
-    it("allows definition of custom exception derived from another exception", function() {
+    it("allows definition of custom error derived from another error", function() {
       expect(StdError.ParentError).to.not.exist;
       StdError.define("ParentError");
       expect(StdError.ParentError).to.exist;
@@ -136,6 +136,29 @@ describe(TEST_NAME, function() {
       expect(err).to.be.instanceof(StdError.ParentError);
       expect(err).to.be.instanceof(StdError);
       expect(err).to.be.instanceof(Error);
+    });
+
+    it("allows definition of custom error on the derived error class", function() {
+      var DerivedStdError = StdError.extend("DerivedStdError");
+      var err = new DerivedStdError();
+
+      expect(DerivedStdError.CustomError).to.not.exist;
+      DerivedStdError.define("CustomError");
+      expect(DerivedStdError.CustomError).to.exist;
+
+      var err = DerivedStdError.CustomError();
+      expect(err.code).to.equal(0);
+      expect(err.name).to.equal("CustomError");
+      expect(err.message).to.equal("CustomError");
+
+      expect(DerivedStdError.WhateverError).to.not.exist;
+      DerivedStdError.define({code: 2000, name: "WhateverError", message: "Whatever error"});
+      expect(DerivedStdError.WhateverError).to.exist;
+
+      var err = new DerivedStdError.WhateverError();
+      expect(err.code).to.equal(2000);
+      expect(err.name).to.equal("WhateverError");
+      expect(err.message).to.equal("Whatever error");
     });
   });
 
