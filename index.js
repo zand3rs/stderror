@@ -57,8 +57,16 @@ Object.defineProperty(StdError, "extend", {
         break;
     }
 
-    if (!name) {
+    if (typeof(name) !== "string") {
       throw new Error("name is required");
+    } else {
+      switch (name) {
+        case "extend":
+        case "define":
+        case "_name":
+          throw new Error("invalid name");
+          break;
+      }
     }
 
     function init(obj, constructor, args) {

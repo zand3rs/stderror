@@ -1,7 +1,5 @@
 require("node-test-helper");
 
-var StdError = require(process.cwd());
-
 describe(TEST_NAME, function() {
 
   describe("constructor", function() {
@@ -45,6 +43,12 @@ describe(TEST_NAME, function() {
   describe(".extend()", function() {
     it("requires an error name", function() {
       expect(StdError.extend).to.throw(Error, /name is required/);
+    });
+
+    it("requires a valid name", function() {
+      expect(function() { StdError.extend("_name"); }).to.throw(Error, /invalid name/);
+      expect(function() { StdError.extend("define"); }).to.throw(Error, /invalid name/);
+      expect(function() { StdError.extend("extend"); }).to.throw(Error, /invalid name/);
     });
 
     it("should allow instantiation of the derived class", function() {
