@@ -34,71 +34,74 @@ function StdError(message) {
 
 StdError.prototype = Object.create(Error.prototype);
 StdError.prototype.constructor = StdError;
-StdError._name = StdError.name;
 
 //------------------------------------------------------------------------------
 
-StdError.extend = extend.bind(StdError);
+Object.defineProperty(StdError, "_name", { value: StdError.name });
 
-function extend(options) {
-  var self = this;
-  var code, name, message;
+//------------------------------------------------------------------------------
 
-  switch (typeof(options)) {
-    case "string":
-      name = options;
-      break;
-    case "object":
-      code = options.code;
-      name = options.name;
-      message = options.message;
-      break;
-  }
+Object.defineProperty(StdError, "extend", {
+  value: function(options) {
+    var self = this;
+    var code, name, message;
 
-  function init(obj, constructor, args) {
-    constructor.apply(obj, args);
-    (code) && (obj.code = code);
-    (name) && (obj.name = name);
-    obj.message = message || obj.name;
-
-    return obj;
-  }
-
-  //-- constructor
-  var child = function() {
-    var args = Array.prototype.slice.call(arguments);
-
-    if (! (this instanceof child)) {
-      var obj = Object.create(child.prototype);
-      return init(obj, child, args);
+    switch (typeof(options)) {
+      case "string":
+        name = options;
+        break;
+      case "object":
+        code = options.code;
+        name = options.name;
+        message = options.message;
+        break;
     }
 
-    init(this, self, args);
-  };
+    function init(obj, constructor, args) {
+      constructor.apply(obj, args);
+      (code) && (obj.code = code);
+      (name) && (obj.name = name);
+      obj.message = message || obj.name;
 
-  child.prototype = Object.create(self.prototype);
-  child.prototype.constructor = child;
-  child.extend = extend.bind(child);
-  child.define = define.bind(child);
-  child._name = name;
+      return obj;
+    }
 
-  return child;
-}
+    //-- constructor
+    var child = function() {
+      var args = Array.prototype.slice.call(arguments);
+
+      if (! (this instanceof child)) {
+        var obj = Object.create(child.prototype);
+        return init(obj, child, args);
+      }
+
+      init(this, self, args);
+    };
+
+    child.prototype = Object.create(self.prototype);
+    child.prototype.constructor = child;
+    Object.defineProperty(child, "extend", { value: self.extend });
+    Object.defineProperty(child, "define", { value: self.define });
+    Object.defineProperty(child, "_name", { value: name });
+
+    return child;
+  }
+});
 
 //------------------------------------------------------------------------------
 
-StdError.define = define.bind(StdError);;
+Object.defineProperty(StdError, "define", {
+  value: function(options) {
+    var self = this;
+    var E = self[(typeof(options) === "object") ? options.parent : ""];
+    var error = (E || self).extend(options);
 
-function define(options) {
-  var self = this;
-  var E = self[(typeof(options) === "object") ? options.parent : ""];
-  var error = (E || self).extend(options);
+    if (error) {
+      Object.defineProperty(self, error._name, { value: error });
+    }
 
-  if (error) {
-    Object.defineProperty(self, error._name, { value: error });
+    return error;
   }
-
-  return error;
-}
+});
 
 //==============================================================================
