@@ -1,7 +1,7 @@
 {
   "name": "stderror",
   "version": "0.1.0",
-  "description": "Extendable Error class.",
+  "description": "Extendable error class derived from native Error object.",
   "main": "index.js",
   "scripts": {
     "test": "make MOCHA_OPTS='-C -R dot' test"
