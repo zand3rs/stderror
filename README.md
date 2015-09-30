@@ -21,14 +21,19 @@ throw new StandardError({code: 1000, message: "My custom error."});
 //-- also works without using new
 throw StandardError("My custom error.");
 
-
 //-- extend
 var UnknownError = StandardError.extend("UnknownError");
-var SystemError = StandardError.extend({code: 2000, name: "SystemError", message: "System error.");
+var SystemError = StandardError.extend({
+  code: 2000,
+  name: "SystemError",
+  message: "System error."
+});
 
 var RecordNotFound = StandardError.extend("RecordNotFound");
-var UserNotFound = RecordNotFound.extend({name: "UserNotFound", message: "User not found."});
-
+var UserNotFound = RecordNotFound.extend({
+  name: "UserNotFound",
+  message: "User not found."
+});
 
 //-- define
 var Exception = StandardError.extend("Exception");
@@ -43,4 +48,3 @@ Exception.define({
 throw new Exception.InvalidArgument();
 throw new Exception.InvalidPassword();
 ```
-
