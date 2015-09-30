@@ -136,6 +136,13 @@ describe(TEST_NAME, function() {
       expect(err).to.be.instanceof(StdError.ParentError);
       expect(err).to.be.instanceof(StdError);
       expect(err).to.be.instanceof(Error);
+
+      var err = new StdError.ChildError();
+      var fn = function() { throw err; }
+
+      expect(fn).to.throw(StdError.ChildError);
+      expect(fn).to.throw(StdError.ParentError);
+      expect(fn).to.throw(Error);
     });
 
     it("allows definition of custom error on the derived error class", function() {

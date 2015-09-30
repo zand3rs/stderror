@@ -95,7 +95,7 @@ function define(options) {
   var error = (E || self).extend(options);
 
   if (error) {
-    self[error._name] = error;
+    Object.defineProperty(self, error._name, { value: error });
   }
 
   return error;
