@@ -33,6 +33,7 @@ function StdError(message) {
 //------------------------------------------------------------------------------
 
 StdError.prototype = Object.create(Error.prototype);
+StdError.prototype.constructor = StdError;
 StdError._name = StdError.name;
 
 //------------------------------------------------------------------------------
@@ -76,6 +77,7 @@ function extend(options) {
   };
 
   child.prototype = Object.create(self.prototype);
+  child.prototype.constructor = child;
   child.extend = extend.bind(child);
   child.define = define.bind(child);
   child._name = name;
