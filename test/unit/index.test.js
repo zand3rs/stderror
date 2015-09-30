@@ -43,26 +43,30 @@ describe(TEST_NAME, function() {
   });
 
   describe(".extend()", function() {
+    it("requires an error name", function() {
+      expect(StdError.extend).to.throw(Error, /name is required/);
+    });
+
     it("should allow instantiation of the derived class", function() {
-      var DerivedStdError = StdError.extend();
+      var DerivedStdError = StdError.extend("DerivedStdError");
       var err = new DerivedStdError();
       expect(err).to.be.instanceof(DerivedStdError);
       expect(err).to.be.instanceof(StdError);
       expect(err).to.be.instanceof(Error);
       expect(err.code).to.equal(0);
-      expect(err.name).to.equal("StdError");
-      expect(err.message).to.equal("StdError");
+      expect(err.name).to.equal("DerivedStdError");
+      expect(err.message).to.equal("DerivedStdError");
     });
 
     it("should allow instantiation of the derived class without using new", function() {
-      var DerivedStdError = StdError.extend();
+      var DerivedStdError = StdError.extend("DerivedStdError");
       var err = DerivedStdError();
       expect(err).to.be.instanceof(DerivedStdError);
       expect(err).to.be.instanceof(StdError);
       expect(err).to.be.instanceof(Error);
       expect(err.code).to.equal(0);
-      expect(err.name).to.equal("StdError");
-      expect(err.message).to.equal("StdError");
+      expect(err.name).to.equal("DerivedStdError");
+      expect(err.message).to.equal("DerivedStdError");
     });
 
     it("should allow derived class to be extended", function() {
@@ -102,6 +106,10 @@ describe(TEST_NAME, function() {
   });
 
   describe(".define()", function() {
+    it("requires an error name", function() {
+      expect(StdError.extend).to.throw(Error, /name is required/);
+    });
+
     it("allows definition of custom error", function() {
       expect(StdError.CustomError).to.not.exist;
       StdError.define("CustomError");

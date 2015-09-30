@@ -57,6 +57,10 @@ Object.defineProperty(StdError, "extend", {
         break;
     }
 
+    if (!name) {
+      throw new Error("name is required");
+    }
+
     function init(obj, constructor, args) {
       constructor.apply(obj, args);
       (code) && (obj.code = code);
