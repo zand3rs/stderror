@@ -15,25 +15,48 @@ function StdError(message) {
 
   Error.captureStackTrace(this, this.constructor);
 
-  //-- defaults...
-  this.code = 0;
-  this.name = "StdError";
-  this.message = "Standard Error";
+  this.code = this._defaults.code;
+  this.name = this._defaults.name;
+  this.message = this._defaults.message;
 
-  if (typeof(message) === "object") {
-    (message.code) && (this.code = message.code);
-    (message.name) && (this.name = message.name);
-    (message.message) && (this.message = message.message);
-  }
-  if (typeof(message) === "string") {
-    this.message = message;
+  switch (typeof(message)) {
+    case "string":
+      this.message = message;
+      break;
+    case "object":
+      (message.code) && (this.code = message.code);
+      (message.name) && (this.name = message.name);
+      (message.message) && (this.message = message.message);
+      break;
   }
 }
 
 //------------------------------------------------------------------------------
 
-StdError.prototype = Object.create(Error.prototype);
-StdError.prototype.constructor = StdError;
+StdError.prototype = Object.create(Error.prototype, {
+  constructor: {
+    value: StdError
+  },
+  _defaults: {
+    value: {
+      code: null,
+      name: "StdError",
+      message: "Standard Error"
+    }
+  }
+});
+
+//------------------------------------------------------------------------------
+
+StdError.prototype.toString = function() {
+  var str = this.name;
+
+  if (this.name !== this.message) {
+    str += ": " + this.message;
+  }
+
+  return str;
+};
 
 //------------------------------------------------------------------------------
 
@@ -44,38 +67,30 @@ Object.defineProperty(StdError, "_name", { value: StdError.name });
 Object.defineProperty(StdError, "extend", {
   value: function(options) {
     var self = this;
-    var code, name, message;
+    var defaults = {
+      code: null,
+      name: "",
+      message: ""
+    };
 
     switch (typeof(options)) {
       case "string":
-        name = options;
+        defaults.name = defaults.message = options;
         break;
       case "object":
-        code = options.code;
-        name = options.name;
-        message = options.message;
+        (options.code) && (defaults.code = options.code);
+        (options.name) && (defaults.name = options.name);
+        defaults.message = options.message || defaults.name;
         break;
     }
 
-    if (typeof(name) !== "string") {
-      throw new Error("name is required");
-    } else {
-      switch (name) {
-        case "extend":
-        case "define":
-        case "_name":
-          throw new Error("invalid name");
-          break;
-      }
-    }
-
-    function init(obj, constructor, args) {
-      constructor.apply(obj, args);
-      (code) && (obj.code = code);
-      (name) && (obj.name = name);
-      obj.message = message || obj.name;
-
-      return obj;
+    switch (defaults.name) {
+      case "extend":
+      case "define":
+      case "_name":
+      case "":
+        throw new Error("invalid name");
+        break;
     }
 
     //-- constructor
@@ -84,17 +99,22 @@ Object.defineProperty(StdError, "extend", {
 
       if (! (this instanceof child)) {
         var obj = Object.create(child.prototype);
-        return init(obj, child, args);
+        child.apply(obj, args);
+        return obj;
       }
 
-      init(this, self, args);
+      self.apply(this, args);
     };
 
-    child.prototype = Object.create(self.prototype);
-    child.prototype.constructor = child;
-    Object.defineProperty(child, "extend", { value: self.extend });
-    Object.defineProperty(child, "define", { value: self.define });
-    Object.defineProperty(child, "_name", { value: name });
+    child.prototype = Object.create(self.prototype, {
+      constructor: { value: child },
+      _defaults: { value: defaults }
+    });
+    Object.defineProperties(child, {
+      _name:  { value: defaults.name },
+      extend: { value: self.extend },
+      define: { value: self.define }
+    });
 
     return child;
   }
