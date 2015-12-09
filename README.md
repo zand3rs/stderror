@@ -1,7 +1,6 @@
 # stderror
 
-WIP: Extendable error class derived from native Error object.
-
+Extendable error class derived from native Error object.
 
 ## Installation
 
@@ -20,8 +19,16 @@ throw new StandardError({code: 1000, message: "My custom error."});
 
 //-- also works without using new
 throw StandardError("My custom error.");
+```
 
-//-- extend
+## Methods
+
+### extend(name)
+### extend(options)
+
+Returns the derived error object based on the given argument.
+
+```javascript
 var UnknownError = StandardError.extend("UnknownError");
 var SystemError = StandardError.extend({
   code: 2000,
@@ -34,8 +41,14 @@ var UserNotFound = RecordNotFound.extend({
   name: "UserNotFound",
   message: "User not found."
 });
+```
 
-//-- define
+### define(name)
+### define(options)
+
+A form of namespacing errors by encapsulating them in a parent error object.
+
+```javascript
 var Exception = StandardError.extend("Exception");
 Exception.define("InvalidArgument");
 Exception.define({
